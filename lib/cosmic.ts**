@@ -1,0 +1,76 @@
+import { createBucketClient } from '@cosmicjs/sdk'
+import { Service, TeamMember, Testimonial, CaseStudy } from '@/types'
+
+const cosmic = createBucketClient({
+  bucketSlug: process.env.COSMIC_BUCKET_SLUG || '',
+  readKey: process.env.COSMIC_READ_KEY || '',
+  writeKey: process.env.COSMIC_WRITE_KEY || '',
+  apiEnvironment: 'staging'
+})
+
+// Services functions
+export async function getServices(): Promise<Service[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'services' })
+      .props(['id', 'title', 'slug', 'metadata'])
+    return response.objects as Service[]
+  } catch (error) {
+    console.error('Failed to fetch services:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return []
+    }
+    throw new Error('Failed to fetch services')
+  }
+}
+
+// Team Members functions
+export async function getTeamMembers(): Promise<TeamMember[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'team-members' })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    return response.objects as TeamMember[]
+  } catch (error) {
+    console.error('Failed to fetch team members:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return []
+    }
+    throw new Error('Failed to fetch team members')
+  }
+}
+
+// Testimonials functions
+export async function getTestimonials(): Promise<Testimonial[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'testimonials' })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    return response.objects as Testimonial[]
+  } catch (error) {
+    console.error('Failed to fetch testimonials:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return []
+    }
+    throw new Error('Failed to fetch testimonials')
+  }
+}
+
+// Case Studies functions
+export async function getCaseStudies(): Promise<CaseStudy[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'case-studies' })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    return response.objects as CaseStudy[]
+  } catch (error) {
+    console.error('Failed to fetch case studies:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return []
+    }
+    throw new Error('Failed to fetch case studies')
+  }
+}
