@@ -21,13 +21,13 @@ export default function ServicesSection({ services }: ServicesSectionProps) {
           {services.map((service, index) => (
             <div 
               key={service.id}
-              className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow animate-fade-in"
+              className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in"
               style={{ animationDelay: `${index * 200}ms` }}
             >
               {service.metadata.icon && (
                 <div className="mb-6">
                   <img 
-                    src={`${service.metadata.icon.imgix_url}?w=80&h=80&fit=crop&auto=format,compress`}
+                    src={`${service.metadata.icon.imgix_url}?w=160&h=160&fit=crop&auto=format,compress`}
                     alt={service.metadata.name}
                     className="w-16 h-16 object-cover rounded-lg"
                     width={64}
@@ -40,17 +40,17 @@ export default function ServicesSection({ services }: ServicesSectionProps) {
                 {service.metadata.name}
               </h3>
               
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-6 leading-relaxed">
                 {service.metadata.short_description}
               </p>
               
               {service.metadata.features && service.metadata.features.length > 0 && (
                 <div className="mb-6">
-                  <h4 className="font-semibold text-gray-900 mb-3">Features:</h4>
+                  <h4 className="font-semibold text-gray-900 mb-3">Key Features:</h4>
                   <ul className="space-y-2">
                     {service.metadata.features.slice(0, 4).map((feature, idx) => (
                       <li key={idx} className="flex items-center text-sm text-gray-600">
-                        <span className="w-1.5 h-1.5 bg-primary-500 rounded-full mr-3"></span>
+                        <span className="w-1.5 h-1.5 bg-primary-500 rounded-full mr-3 flex-shrink-0"></span>
                         {feature}
                       </li>
                     ))}
@@ -58,13 +58,16 @@ export default function ServicesSection({ services }: ServicesSectionProps) {
                 </div>
               )}
               
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                 {service.metadata.starting_price && (
-                  <span className="text-2xl font-bold text-primary-600">
-                    {service.metadata.starting_price}
-                  </span>
+                  <div className="text-left">
+                    <span className="text-sm text-gray-500 block">Starting at</span>
+                    <span className="text-2xl font-bold text-primary-600">
+                      {service.metadata.starting_price}
+                    </span>
+                  </div>
                 )}
-                <button className="btn-primary">
+                <button className="btn-primary ml-auto">
                   Learn More
                 </button>
               </div>

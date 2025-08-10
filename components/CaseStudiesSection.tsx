@@ -5,6 +5,23 @@ interface CaseStudiesSectionProps {
 }
 
 export default function CaseStudiesSection({ caseStudies }: CaseStudiesSectionProps) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long' 
+    })
+  }
+
+  const extractKeyResults = (resultsHtml: string) => {
+    // Extract bullet points from HTML results
+    const matches = resultsHtml.match(/<li><strong>([^<]+)<\/strong>[^<]*<\/li>/g)
+    return matches ? matches.slice(0, 3).map(match => {
+      const text = match.replace(/<[^>]*>/g, '')
+      return text.split(' - ')[0] // Get just the key metric
+    }) : []
+  }
+
   return (
     <section id="case-studies" className="py-20 bg-gray-50">
       <div className="section-container">
@@ -21,36 +38,33 @@ export default function CaseStudiesSection({ caseStudies }: CaseStudiesSectionPr
           {caseStudies.map((caseStudy, index) => (
             <div 
               key={caseStudy.id}
-              className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow animate-fade-in"
+              className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-in"
               style={{ animationDelay: `${index * 300}ms` }}
             >
               {caseStudy.metadata.featured_image && (
-                <div className="aspect-video overflow-hidden">
+                <div className="aspect-video overflow-hidden relative">
                   <img 
                     src={`${caseStudy.metadata.featured_image.imgix_url}?w=800&h=400&fit=crop&auto=format,compress`}
                     alt={caseStudy.metadata.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                     width={800}
                     height={400}
                   />
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-gray-700">
+                    {caseStudy.metadata.project_date && formatDate(caseStudy.metadata.project_date)}
+                  </div>
                 </div>
               )}
               
               <div className="p-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-2xl font-semibold text-gray-900">
+                <div className="mb-6">
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
                     {caseStudy.metadata.title}
                   </h3>
-                  {caseStudy.metadata.project_date && (
-                    <span className="text-sm text-gray-500">
-                      {new Date(caseStudy.metadata.project_date).getFullYear()}
-                    </span>
-                  )}
+                  <p className="text-primary-600 font-medium">
+                    Client: {caseStudy.metadata.client}
+                  </p>
                 </div>
-                
-                <p className="text-primary-600 font-medium mb-4">
-                  Client: {caseStudy.metadata.client}
-                </p>
                 
                 <p className="text-gray-600 mb-6 leading-relaxed">
                   {caseStudy.metadata.overview}
@@ -63,7 +77,7 @@ export default function CaseStudiesSection({ caseStudies }: CaseStudiesSectionPr
                       {caseStudy.metadata.services.map((service, idx) => (
                         <span 
                           key={idx}
-                          className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm"
+                          className="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-medium"
                         >
                           {service.metadata.name}
                         </span>
@@ -75,16 +89,32 @@ export default function CaseStudiesSection({ caseStudies }: CaseStudiesSectionPr
                 {caseStudy.metadata.results && (
                   <div className="mb-6">
                     <h4 className="font-semibold text-gray-900 mb-3">Key Results:</h4>
-                    <div 
-                      className="text-gray-600 text-sm prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: caseStudy.metadata.results }}
-                    />
+                    {extractKeyResults(caseStudy.metadata.results).length > 0 ? (
+                      <div className="space-y-2">
+                        {extractKeyResults(caseStudy.metadata.results).map((result, idx) => (
+                          <div key={idx} className="flex items-center text-sm text-gray-600">
+                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-3 flex-shrink-0"></span>
+                            {result}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div 
+                        className="text-gray-600 text-sm prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: caseStudy.metadata.results }}
+                      />
+                    )}
                   </div>
                 )}
                 
-                <button className="btn-primary w-full">
-                  View Full Case Study
-                </button>
+                <div className="flex gap-3">
+                  <button className="btn-primary flex-1">
+                    View Full Case Study
+                  </button>
+                  <button className="btn-secondary px-6">
+                    Contact Us
+                  </button>
+                </div>
               </div>
             </div>
           ))}
