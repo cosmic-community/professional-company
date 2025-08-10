@@ -14,6 +14,7 @@ export async function getServices(): Promise<Service[]> {
     const response = await cosmic.objects
       .find({ type: 'services' })
       .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
     return response.objects as Service[]
   } catch (error) {
     console.error('Failed to fetch services:', error)
@@ -24,4 +25,87 @@ export async function getServices(): Promise<Service[]> {
   }
 }
 
-// Other functions remain unchanged...
+// Team Members functions
+export async function getTeamMembers(): Promise<TeamMember[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'team-members' })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    return response.objects as TeamMember[]
+  } catch (error) {
+    console.error('Failed to fetch team members:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return []
+    }
+    throw new Error('Failed to fetch team members')
+  }
+}
+
+// Testimonials functions
+export async function getTestimonials(): Promise<Testimonial[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'testimonials' })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    return response.objects as Testimonial[]
+  } catch (error) {
+    console.error('Failed to fetch testimonials:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return []
+    }
+    throw new Error('Failed to fetch testimonials')
+  }
+}
+
+// Case Studies functions
+export async function getCaseStudies(): Promise<CaseStudy[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'case-studies' })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    return response.objects as CaseStudy[]
+  } catch (error) {
+    console.error('Failed to fetch case studies:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return []
+    }
+    throw new Error('Failed to fetch case studies')
+  }
+}
+
+// Get single service by slug
+export async function getService(slug: string): Promise<Service | null> {
+  try {
+    const response = await cosmic.objects
+      .findOne({ type: 'services', slug })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    return response.object as Service
+  } catch (error) {
+    console.error('Failed to fetch service:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return null
+    }
+    throw new Error('Failed to fetch service')
+  }
+}
+
+// Get single case study by slug
+export async function getCaseStudy(slug: string): Promise<CaseStudy | null> {
+  try {
+    const response = await cosmic.objects
+      .findOne({ type: 'case-studies', slug })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1)
+    return response.object as CaseStudy
+  } catch (error) {
+    console.error('Failed to fetch case study:', error)
+    if (error && typeof error === 'object' && 'status' in error && error.status === 404) {
+      return null
+    }
+    throw new Error('Failed to fetch case study')
+  }
+}
